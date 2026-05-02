@@ -1,1 +1,247 @@
-https://docs.google.com/document/d/1KOl8I_j6xvyEAFF8Tu8qz1ydAa6-lJriBQrhoO4QJEo/edit?usp=drive_link
+CREATE TABLE dept111 (
+  depno   NUMBER(5) PRIMARY KEY,
+  dname   VARCHAR2(30) NOT NULL,
+  loc 	VARCHAR2(20)
+);
+CREATE TABLE emp111 (
+  emono	NUMBER(4) PRIMARY KEY,
+  ename	VARCHAR2(25) NOT NULL,
+  jop  	VARCHAR2(10),
+  mgr  	NUMBER(4),
+  Hiredate DATE,
+  sal  	NUMBER(7,2) CHECK (sal BETWEEN 500 AND 1900),
+  Deptno   NUMBER(5) NOT NULL,
+  CONSTRAINT fk_emp_dept FOREIGN KEY (Deptno) REFERENCES dept111(depno)
+ 
+);
+-- عرض جميع الجداول
+SELECT * FROM tab;
+SELECT table_name FROM user_tables;
+DESC dept111;
+DESC emp111;
+ 
+-- إضافة حقل جديد إلى emp111
+ALTER TABLE emp111 ADD (comm NUMBER(7,2));
+-- تعديل نوع حقل في emp111 (تغيير القيمة)
+ALTER TABLE emp111 MODIFY (ename VARCHAR2(24));
+-- تغيير اسم حقل في emp11
+ALTER TABLE emp111 RENAME COLUMN mgr TO manager;
+-- حذف حقل من emp111
+ALTER TABLE emp111 DROP COLUMN comm;
+-- إضافة مفتاح أساسي إلى dept555
+ALTER TABLE dept111 ADD CONSTRAINT pk_dept111 PRIMARY KEY (Depno);
+ 
+-- إضافة مفتاح أساسي باستخدام CONSTRAINT
+ALTER TABLE emp55 ADD CONSTRAINT pk_emp111 PRIMARY KEY (Empno);
+-- مفتاح اجنبي
+CONSTRAINT fk_emp_dept FOREIGN KEY (Deptno) REFERENCES dept111(depno)
+-- إدراج بيانات في dept555
+INSERT INTO dept111 VALUES (10, 'HR', 'Amman');
+INSERT INTO dept111 VALUES (20, 'IT', 'Dubai');
+INSERT INTO dept111 VALUES (30, 'Sales', 'Riyadh');
+INSERT INTO dept111 VALUES (40, 'Finance', 'Cairo');
+-- إدراج بيانات في emp55
+INSERT INTO emp111 VALUES (101, 'Ahmed', 'Manager', 100, DATE '2023-01-15', 1200, 10);
+INSERT INTO emp111 VALUES (102, 'Sara', 'Analyst', 101, DATE '2023-02-20', 1300, 20);
+INSERT INTO emp111 VALUES (103, 'Mohammad', 'Clerk', 101, DATE '2023-03-10', 1500, 10);
+-- إدراج بيانات في dept111 (جدول الأب)
+INSERT INTO dept111 VALUES (10, 'Human Resources', 'Amman');
+INSERT INTO dept111 VALUES (20, 'Information Technology', 'Dubai');
+INSERT INTO dept111 VALUES (30, 'Sales Department', 'Riyadh');
+INSERT INTO dept111 VALUES (40, 'Finance Department', 'Cairo');
+-- إدراج بيانات في emp111 (جدول الابن)
+INSERT INTO emp111 VALUES (101, 'Ahmed Ali', 'Manager', 100, DATE '2023-01-15', 1500, 10);
+INSERT INTO emp111 VALUES (102, 'Sara Kamel', 'Analyst', 101, DATE '2023-02-20', 1200, 20);
+INSERT INTO emp111 VALUES (103, 'Mohammad Nader', 'Clerk', 101, DATE '2023-03-10', 800, 10);
+INSERT INTO emp111 VALUES (104, 'Lina Ahmad', 'Sales', 102, DATE '2023-04-05', 1100, 30);
+INSERT INTO emp111 VALUES (105, 'Omar Fadi', 'IT Support', 102, DATE '2023-05-12', 900, 20);
+SELECT * FROM dept111;
+SELECT * FROM emp111;
+SELECT ename, jop, sal FROM emp111;
+-- عرض مع شرط (WHERE)
+SELECT * FROM emp111 WHERE sal > 1000;
+SELECT * FROM emp111 WHERE deptno = 10;
+-- عرض مع ترتيب تنازلي (ORDER BY DESC)
+SELECT ename, sal FROM emp111 ORDER BY sal DESC;
+SELECT ename, hiredate FROM emp111 ORDER BY hiredate DESC;
+-- عرض مع ترتيب تصاعدي (ORDER BY ASC)
+SELECT ename, sal FROM emp111 ORDER BY ename ASC;
+-- عرض بيانات فريدة (DISTINCT)
+SELECT DISTINCT jop FROM emp111;
+SELECT DISTINCT deptno FROM emp111;
+-- عمليات حسابية على الرواتب
+SELECT ename, sal, sal*12 AS annual_salary, sal*1.1 AS salary_after_raise FROM emp111;
+-- إضافة قيمة ثابتة للراتب
+SELECT ename, sal, sal+500 AS salary_plus_bonus FROM emp111;
+-- AVG: متوسط الرواتب
+SELECT AVG(sal) AS average_salary FROM emp111;
+ 
+-- MAX, MIN: أعلى وأقل راتب
+SELECT MAX(sal) AS highest_salary, MIN(sal) AS lowest_salary FROM emp111;
+ 
+-- SUM: مجموع الرواتب
+SELECT SUM(sal) AS total_salaries FROM emp111;
+-- دوال متعددة معاً
+SELECT
+	COUNT(*) AS total_employees,
+	AVG(sal) AS avg_salary,
+	MAX(sal) AS max_salary,
+	MIN(sal) AS min_salary,
+	SUM(sal) AS total_salary
+FROM emp111;
+-- تحديث راتب موظف معين
+UPDATE emp111 SET sal = 1600 WHERE emono = 101;
+ 
+-- تحديث عدة أعمدة لموظف معين
+UPDATE emp111 SET sal = 1300, jop = 'Senior Analyst' WHERE emono = 102;
+ 
+-- تحديث رواتب جميع موظفي قسم معين
+UPDATE emp111 SET sal = sal * 1.1 WHERE deptno = 10;
+ 
+-- تحديث باستخدام شرط مركب
+UPDATE emp111 SET sal = sal + 200 WHERE deptno = 20 AND sal < 1000;
+ 
+-- تحديث باستخدام TO_DATE
+UPDATE emp111 SET hiredate = TO_DATE('2023-06-01', 'YYYY-MM-DD') WHERE emono = 103;
+ 
+-- تحديث بيانات في emp100
+UPDATE emp100 SET sal = 699 WHERE emono = 102;
+ 
+-- تأكيد التحديثات
+COMMIT;
+-- حذف موظف معين
+DELETE FROM emp111 WHERE emono = 105;
+ 
+-- حذف موظفين حسب شرط
+DELETE FROM emp111 WHERE sal < 800;
+ 
+-- حذف جميع موظفي قسم معين
+DELETE FROM emp111 WHERE deptno = 30;
+ 
+-- حذف صفوف حسب شرط مركب
+DELETE FROM emp100 WHERE sal < 800 AND deptno = 10;
+ 
+-- حذف جميع البيانات من جدول (مع إمكانية التراجع)
+DELETE FROM emp111;
+ROLLBACK;  -- سيعيد البيانات
+ 
+-- حذف بسرعة (TRUNCATE) - لا يمكن التراجع
+TRUNCATE TABLE emp111
+- عرض جميع القيود لجدول emp111
+SELECT constraint_name, constraint_type, table_name
+FROM user_constraints
+WHERE table_name = 'EMP111';
+ 
+-- عرض المفتاح الأساسي فقط (P)
+SELECT constraint_name, constraint_type
+FROM user_constraints
+WHERE table_name = 'EMP111' AND constraint_type = 'P';
+-- استعلام مركب مع WHERE
+SELECT e.ename, e.sal, d.dname
+FROM emp111 e, dept111 d
+WHERE e.deptno = d.depno AND e.sal > 1000;
+ 
+-- استعلام مركب (Subquery): إيجاد موقع القسم الذي يعمل به الرئيس
+SELECT loc
+FROM dept111
+WHERE depno = (SELECT deptno FROM emp111 WHERE jop = 'Manager' AND ROWNUM = 1);
+-- حذف جدول عادي
+DROP TABLE emp111;
+ 
+-- إنشاء مستخدم جديد
+CREATE USER student_db IDENTIFIED BY student123;
+ 
+-- منح صلاحية الدخول وإنشاء الجداول
+GRANT connect, resource TO student_db;
+ 
+-- منح صلاحيات محددة
+GRANT SELECT, INSERT, UPDATE ON emp111 TO student_db;
+GRANT CREATE TABLE, CREATE VIEW TO student_db;
+ 
+-- مثال: منح الصلاحيات لمستخدم معين
+GRANT connect, resource TO ahmed;
+ 
+-- إزالة صلاحية من مستخدم
+REVOKE RESOURCE FROM ahmed;
+ 
+-- إزالة صلاحية محددة
+REVOKE SELECT ON emp111 FROM student_db;
+ 
+-- حذف مستخدم نهائياً (CASCADE يحذف جميع كائناته)
+DROP USER student_db CASCADE;
+ 
+-- ================================================================
+-- الجزء الرابع عشر: التراجع عن التغييرات (ROLLBACK) ونقطة الحفظ (SAVEPOINT)
+-- ================================================================
+ 
+-- إنشاء نقطة حفظ
+SAVEPOINT before_update;
+ 
+-- تنفيذ عمليات
+UPDATE emp111 SET sal = sal * 1.2 WHERE deptno = 10;
+ 
+-- التراجع إلى نقطة الحفظ
+ROLLBACK TO before_update;
+ 
+-- التراجع عن آخر عملية
+ROLLBACK;
+ 
+-- تأكيد العمليات وحفظها نهائياً
+COMMIT;
+ 
+-- ================================================================
+-- الجزء الخامس عشر: أمثلة إضافية وشاملة
+-- ================================================================
+ 
+-- 1. عرض الموظفين الذين رواتبهم فوق المتوسط
+SELECT ename, sal
+FROM emp111
+WHERE sal > (SELECT AVG(sal) FROM emp111);
+ 
+-- 2. عرض عدد الموظفين لكل قسم
+SELECT d.dname, COUNT(e.emono) AS employee_count
+FROM dept111 d
+LEFT JOIN emp111 e ON d.depno = e.deptno
+GROUP BY d.dname;
+ 
+-- 3. عرض أعلى 3 رواتب
+SELECT ename, sal
+FROM emp111
+ORDER BY sal DESC
+FETCH FIRST 3 ROWS ONLY;
+ 
+-- 4. عرض الموظفين الذين تم تعيينهم في 2023
+SELECT ename, hiredate
+FROM emp111
+WHERE EXTRACT(YEAR FROM hiredate) = 2023;
+ 
+-- 5. تحديث باستخدام CASE
+UPDATE emp111
+SET sal = CASE
+	WHEN sal < 800 THEN sal + 300
+	WHEN sal BETWEEN 800 AND 1200 THEN sal + 200
+	ELSE sal + 100
+END;
+ 
+-- 6. عرض معلومات مفصلة عن الموظفين والأقسام
+SELECT
+	e.emono AS employee_id,
+	e.ename AS employee_name,
+	e.jop AS job_title,
+	e.sal AS salary,
+	d.dname AS department_name,
+	d.loc AS location
+FROM emp111 e
+JOIN dept111 d ON e.deptno = d.depno
+ORDER BY d.dname, e.sal DESC;
+ 
+ 
+ 
+ 
+ 
+Results
+Explain
+Describe
+Saved SQL
+History
+
